@@ -26,6 +26,7 @@
 /* USER CODE BEGIN Includes */
 #include "oled.h"
 #include "dht11.h"
+#include "stm32f1xx_hal_flash.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,7 +36,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+// Flash storage address (last page of Flash memory for STM32F103C8T6 - 64KB)
+#define FLASH_STORAGE_ADDR  0x0800FC00
+#define FLASH_MAGIC_NUMBER  0x12345678
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -65,6 +68,22 @@ uint8_t temp_threshold = 30;
 uint8_t humidity_threshold = 100;
 uint16_t mq2_threshold = 240;
 uint8_t setting_first_entry = 1; // Flag for first entry into setting mode
+
+// Vibration alert data for USART3
+uint8_t vibration_alert_data[] = {0xFD, 0x00, 0x0A, 0x01, 0x01, 0xB7, 0xC7, 0xB7, 0xA8, 0xB4, 0xB3, 0xC8, 0xEB};
+uint8_t vibration_sent = 0; // Flag to avoid duplicate sending
+
+// MQ2 smoke alert data for USART3
+uint8_t mq2_alert_data[] = {0xFD, 0x00, 0x12, 0x01, 0x01, 0xD1, 0xCC, 0xCE, 0xED, 0xB9, 0xFD, 0xB4, 0xF3, 0xA3, 0xAC, 0xC7, 0xEB, 0xD0, 0xA1, 0xD0, 0xC4};
+uint8_t mq2_sent = 0; // Flag to avoid duplicate sending
+
+// Temperature alert data for USART3
+uint8_t temp_alert_data[] = {0xFD, 0x00, 0x0A, 0x01, 0x01, 0xCE, 0xC2, 0xB6, 0xC8, 0xB9, 0xFD, 0xB8, 0xDF};
+uint8_t temp_alert_sent = 0; // Flag to avoid duplicate sending
+
+// Humidity alert data for USART3
+uint8_t humidity_alert_data[] = {0xFD, 0x00, 0x0A, 0x01, 0x01, 0xCA, 0xAA, 0xB6, 0xC8, 0xB9, 0xFD, 0xB4, 0xF3};
+uint8_t humidity_alert_sent = 0; // Flag to avoid duplicate sending
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -75,6 +94,72 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+// Flash storage structure
+typedef struct {
+    uint32_t magic_number;
+    uint8_t temp_threshold;
+    uint8_t humidity_threshold;
+    uint16_t mq2_threshold;
+} FlashStorage_t;
+
+// Function to erase Flash page
+void Flash_Erase(void)
+{
+    HAL_FLASH_Unlock();
+    
+    FLASH_EraseInitTypeDef EraseInitStruct;
+    uint32_t PageError;
+    
+    EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
+    EraseInitStruct.PageAddress = FLASH_STORAGE_ADDR;
+    EraseInitStruct.NbPages = 1;
+    
+    HAL_FLASHEx_Erase(&EraseInitStruct, &PageError);
+    
+    HAL_FLASH_Lock();
+}
+
+// Function to write threshold data to Flash
+void Flash_Write_Thresholds(void)
+{
+    Flash_Erase();
+    
+    HAL_FLASH_Unlock();
+    
+    FlashStorage_t storage;
+    storage.magic_number = FLASH_MAGIC_NUMBER;
+    storage.temp_threshold = temp_threshold;
+    storage.humidity_threshold = humidity_threshold;
+    storage.mq2_threshold = mq2_threshold;
+    
+    uint32_t* data_ptr = (uint32_t*)&storage;
+    uint32_t address = FLASH_STORAGE_ADDR;
+    
+    for(int i = 0; i < sizeof(FlashStorage_t) / 4; i++)
+    {
+        HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, address, *data_ptr);
+        address += 4;
+        data_ptr++;
+    }
+    
+    HAL_FLASH_Lock();
+}
+
+// Function to read threshold data from Flash
+void Flash_Read_Thresholds(void)
+{
+    FlashStorage_t* storage = (FlashStorage_t*)FLASH_STORAGE_ADDR;
+    
+    if(storage->magic_number == FLASH_MAGIC_NUMBER)
+    {
+        // Valid data found, load thresholds
+        temp_threshold = storage->temp_threshold;
+        humidity_threshold = storage->humidity_threshold;
+        mq2_threshold = storage->mq2_threshold;
+    }
+    // If magic number doesn't match, use default values
+}
 
 #ifdef __cplusplus
 extern "C" {
@@ -171,6 +256,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
                 OLED_Clear();
                 // Reset flag for next entry
                 setting_first_entry = 1;
+                // Save thresholds to Flash
+                Flash_Write_Thresholds();
             }
             else
             {
@@ -278,6 +365,8 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 	OLED_Init();
+	// Read thresholds from Flash
+	Flash_Read_Thresholds();
 //  OLED_ShowString(0,0,(uint8_t*)"hello",8,1);
 //	OLED_Refresh();
   /* USER CODE END 2 */
@@ -295,6 +384,34 @@ int main(void)
 		{
 			DHT11_READ_DATA(&dht_data);
 			dht11_read_time = HAL_GetTick();
+			
+			// Check if temperature exceeds threshold
+			if(dht_data.temp_int > temp_threshold)
+			{
+				if(!temp_alert_sent)
+				{
+					HAL_UART_Transmit(&huart3, temp_alert_data, sizeof(temp_alert_data), 100);
+					temp_alert_sent = 1;
+				}
+			}
+			else
+			{
+				temp_alert_sent = 0; // Reset flag when temperature drops below threshold
+			}
+			
+			// Check if humidity exceeds threshold
+			if(dht_data.humidity_int > humidity_threshold)
+			{
+				if(!humidity_alert_sent)
+				{
+					HAL_UART_Transmit(&huart3, humidity_alert_data, sizeof(humidity_alert_data), 100);
+					humidity_alert_sent = 1;
+				}
+			}
+			else
+			{
+				humidity_alert_sent = 0; // Reset flag when humidity drops below threshold
+			}
 		}
 		
 		if(HAL_GetTick() - mq2_read_time >= 500)
@@ -304,6 +421,20 @@ int main(void)
 			adc_value = HAL_ADC_GetValue(&hadc1);
 			HAL_ADC_Stop(&hadc1);
 			mq2_read_time = HAL_GetTick();
+			
+			// Check if MQ2 exceeds threshold
+			if(adc_value > mq2_threshold)
+			{
+				if(!mq2_sent)
+				{
+					HAL_UART_Transmit(&huart3, mq2_alert_data, sizeof(mq2_alert_data), 100);
+					mq2_sent = 1;
+				}
+			}
+			else
+			{
+				mq2_sent = 0; // Reset flag when value drops below threshold
+			}
 		}
 		
 		sprintf(show_data, "T:%d.%dC H:%d.%d%%", dht_data.temp_int, dht_data.temp_dec, dht_data.humidity_int, dht_data.humidity_dec);
@@ -342,6 +473,12 @@ int main(void)
 			{
 				vibration_active = 1;
 				vibration_start_time = HAL_GetTick();
+				// Send vibration alert via USART3
+				if(!vibration_sent)
+				{
+					HAL_UART_Transmit(&huart3, vibration_alert_data, sizeof(vibration_alert_data), 100);
+					vibration_sent = 1;
+				}
 			}
 		}
 		
@@ -350,6 +487,7 @@ int main(void)
 			if(HAL_GetTick() - vibration_start_time >= 3000)
 			{
 				vibration_active = 0;
+				vibration_sent = 0; // Reset flag after vibration period ends
 			}
 		}
 		
