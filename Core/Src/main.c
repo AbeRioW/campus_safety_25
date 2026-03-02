@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -49,6 +50,13 @@ uint32_t adc_value;
 char show_data[20];
 uint8_t hc_sr505_count = 0;
 uint8_t people_detected = 0;
+uint8_t vibration_detected = 0;
+uint32_t vibration_start_time = 0;
+uint8_t vibration_active = 0;
+uint32_t beep_start_time = 0;
+uint8_t beep_active = 0;
+uint32_t dht11_read_time = 0;
+uint32_t mq2_read_time = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -115,6 +123,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_ADC1_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 	OLED_Init();
 //  OLED_ShowString(0,0,(uint8_t*)"hello",8,1);
@@ -130,22 +139,31 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	if (!in_setting_mode)
 	{
-		DHT11_READ_DATA(&dht_data);
-		// Read ADC value from MQ2 sensor
-		 HAL_ADC_Start(&hadc1);
-		 HAL_ADC_PollForConversion(&hadc1, 100);
-		 adc_value = HAL_ADC_GetValue(&hadc1);
-		 HAL_ADC_Stop(&hadc1);
+		if(HAL_GetTick() - dht11_read_time >= 2000)
+		{
+			DHT11_READ_DATA(&dht_data);
+			dht11_read_time = HAL_GetTick();
+		}
 		
-		// Convert to string and display
-		 sprintf(show_data, "MQ2: %lu", adc_value);
-		 OLED_ShowString(0, 10, (uint8_t*)show_data, 8, 1);
+		if(HAL_GetTick() - mq2_read_time >= 500)
+		{
+			HAL_ADC_Start(&hadc1);
+			HAL_ADC_PollForConversion(&hadc1, 100);
+			adc_value = HAL_ADC_GetValue(&hadc1);
+			HAL_ADC_Stop(&hadc1);
+			mq2_read_time = HAL_GetTick();
+		}
 		
-		// Read HC-SR505 sensor
+		sprintf(show_data, "T:%d.%dC H:%d.%d%%", dht_data.temp_int, dht_data.temp_dec, dht_data.humidity_int, dht_data.humidity_dec);
+		OLED_ShowString(0, 0, (uint8_t*)show_data, 8, 1);
+		
+		sprintf(show_data, "MQ2:%lu   ", adc_value);
+		OLED_ShowString(0, 10, (uint8_t*)show_data, 8, 1);
+		
 		if(HAL_GPIO_ReadPin(HC_SR505_GPIO_Port, HC_SR505_Pin) == GPIO_PIN_SET)
 		{
 			hc_sr505_count++;
-			if(hc_sr505_count >= 3)
+			if(hc_sr505_count >= 10)
 			{
 				people_detected = 1;
 			}
@@ -156,19 +174,61 @@ int main(void)
 			people_detected = 0;
 		}
 		
-		// Display people status
 		if(people_detected)
 		{
-			OLED_ShowString(0, 30, (uint8_t*)"people closed", 8, 1);
+			OLED_ShowString(0, 20, (uint8_t*)"People:Yes", 8, 1);
 		}
 		else
 		{
-			 OLED_ShowString(0, 30, (uint8_t*)"             ", 8, 1);
+			OLED_ShowString(0, 20, (uint8_t*)"People:No ", 8, 1);
 		}
 		
-		 OLED_Refresh();
+		if(HAL_GPIO_ReadPin(SW_1801P_GPIO_Port, SW_1801P_Pin) == GPIO_PIN_RESET)
+		{
+			vibration_detected = 1;
+			if(!vibration_active)
+			{
+				vibration_active = 1;
+				vibration_start_time = HAL_GetTick();
+			}
+		}
 		
-		 HAL_Delay(1000);
+		if(vibration_active)
+		{
+			if(HAL_GetTick() - vibration_start_time >= 3000)
+			{
+				vibration_active = 0;
+			}
+		}
+		
+		if(vibration_active)
+		{
+			OLED_ShowString(0, 30, (uint8_t*)"Vibr:Yes", 8, 1);
+		}
+		else
+		{
+			OLED_ShowString(0, 30, (uint8_t*)"Vibr:No ", 8, 1);
+		}
+		
+		if(people_detected && !beep_active)
+		{
+			HAL_GPIO_WritePin(BEEP_GPIO_Port, BEEP_Pin, GPIO_PIN_RESET);
+			beep_active = 1;
+			beep_start_time = HAL_GetTick();
+		}
+		
+		if(beep_active)
+		{
+			if(HAL_GetTick() - beep_start_time >= 5000)
+			{
+				HAL_GPIO_WritePin(BEEP_GPIO_Port, BEEP_Pin, GPIO_PIN_SET);
+				beep_active = 0;
+			}
+		}
+		
+		OLED_Refresh();
+		
+		HAL_Delay(100);
 	}
   }
   /* USER CODE END 3 */
