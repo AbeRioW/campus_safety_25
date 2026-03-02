@@ -1069,30 +1069,30 @@ Image Symbol Table
     i.__NVIC_SetPriority                     0x080024c6   Section        0  stm32f1xx_hal_cortex.o(i.__NVIC_SetPriority)
     __NVIC_SetPriority                       0x080024c7   Thumb Code    32  stm32f1xx_hal_cortex.o(i.__NVIC_SetPriority)
     i.main                                   0x080024e8   Section        0  main.o(i.main)
-    .constdata                               0x08002754   Section       18  stm32f1xx_hal_rcc.o(.constdata)
-    aPredivFactorTable                       0x08002754   Data           2  stm32f1xx_hal_rcc.o(.constdata)
-    aPLLMULFactorTable                       0x08002756   Data          16  stm32f1xx_hal_rcc.o(.constdata)
-    .constdata                               0x08002766   Section       18  stm32f1xx_hal_rcc_ex.o(.constdata)
-    aPredivFactorTable                       0x08002766   Data           2  stm32f1xx_hal_rcc_ex.o(.constdata)
-    aPLLMULFactorTable                       0x08002768   Data          16  stm32f1xx_hal_rcc_ex.o(.constdata)
-    .constdata                               0x08002778   Section       16  system_stm32f1xx.o(.constdata)
-    .constdata                               0x08002788   Section        8  system_stm32f1xx.o(.constdata)
-    .constdata                               0x08002790   Section     6632  oled.o(.constdata)
-    .data                                    0x20000000   Section      100  main.o(.data)
-    last_interrupt_time                      0x20000020   Data           4  main.o(.data)
-    .data                                    0x20000064   Section       12  stm32f1xx_hal.o(.data)
-    .data                                    0x20000070   Section        4  system_stm32f1xx.o(.data)
-    .bss                                     0x20000074   Section       20  main.o(.bss)
-    .bss                                     0x20000088   Section       48  adc.o(.bss)
-    .bss                                     0x200000b8   Section       72  usart.o(.bss)
-    .bss                                     0x20000100   Section       32  stm32f1xx_hal_flash.o(.bss)
-    .bss                                     0x20000120   Section     1152  oled.o(.bss)
-    .bss                                     0x200005a0   Section       96  libspace.o(.bss)
-    HEAP                                     0x20000600   Section      512  startup_stm32f103xb.o(HEAP)
-    Heap_Mem                                 0x20000600   Data         512  startup_stm32f103xb.o(HEAP)
-    STACK                                    0x20000800   Section     1024  startup_stm32f103xb.o(STACK)
-    Stack_Mem                                0x20000800   Data        1024  startup_stm32f103xb.o(STACK)
-    __initial_sp                             0x20000c00   Data           0  startup_stm32f103xb.o(STACK)
+    .constdata                               0x0800276c   Section       18  stm32f1xx_hal_rcc.o(.constdata)
+    aPredivFactorTable                       0x0800276c   Data           2  stm32f1xx_hal_rcc.o(.constdata)
+    aPLLMULFactorTable                       0x0800276e   Data          16  stm32f1xx_hal_rcc.o(.constdata)
+    .constdata                               0x0800277e   Section       18  stm32f1xx_hal_rcc_ex.o(.constdata)
+    aPredivFactorTable                       0x0800277e   Data           2  stm32f1xx_hal_rcc_ex.o(.constdata)
+    aPLLMULFactorTable                       0x08002780   Data          16  stm32f1xx_hal_rcc_ex.o(.constdata)
+    .constdata                               0x08002790   Section       16  system_stm32f1xx.o(.constdata)
+    .constdata                               0x080027a0   Section        8  system_stm32f1xx.o(.constdata)
+    .constdata                               0x080027a8   Section     6632  oled.o(.constdata)
+    .data                                    0x20000000   Section      104  main.o(.data)
+    last_interrupt_time                      0x20000024   Data           4  main.o(.data)
+    .data                                    0x20000068   Section       12  stm32f1xx_hal.o(.data)
+    .data                                    0x20000074   Section        4  system_stm32f1xx.o(.data)
+    .bss                                     0x20000078   Section       20  main.o(.bss)
+    .bss                                     0x2000008c   Section       48  adc.o(.bss)
+    .bss                                     0x200000bc   Section       72  usart.o(.bss)
+    .bss                                     0x20000108   Section       32  stm32f1xx_hal_flash.o(.bss)
+    .bss                                     0x20000128   Section     1152  oled.o(.bss)
+    .bss                                     0x200005a8   Section       96  libspace.o(.bss)
+    HEAP                                     0x20000608   Section      512  startup_stm32f103xb.o(HEAP)
+    Heap_Mem                                 0x20000608   Data         512  startup_stm32f103xb.o(HEAP)
+    STACK                                    0x20000808   Section     1024  startup_stm32f103xb.o(STACK)
+    Stack_Mem                                0x20000808   Data        1024  startup_stm32f103xb.o(STACK)
+    __initial_sp                             0x20000c08   Data           0  startup_stm32f103xb.o(STACK)
 
     Global Symbols
 
@@ -1338,15 +1338,15 @@ Image Symbol Table
     SystemInit                               0x08002219   Thumb Code     2  system_stm32f1xx.o(i.SystemInit)
     UpdateSettingDisplay                     0x08002395   Thumb Code   168  main.o(i.UpdateSettingDisplay)
     UsageFault_Handler                       0x080024c5   Thumb Code     2  stm32f1xx_it.o(i.UsageFault_Handler)
-    main                                     0x080024e9   Thumb Code   518  main.o(i.main)
-    AHBPrescTable                            0x08002778   Data          16  system_stm32f1xx.o(.constdata)
-    APBPrescTable                            0x08002788   Data           8  system_stm32f1xx.o(.constdata)
-    asc2_0806                                0x08002790   Data         552  oled.o(.constdata)
-    asc2_1206                                0x080029b8   Data        1140  oled.o(.constdata)
-    asc2_1608                                0x08002e2c   Data        1520  oled.o(.constdata)
-    asc2_2412                                0x0800341c   Data        3420  oled.o(.constdata)
-    Region$$Table$$Base                      0x08004178   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x08004198   Number         0  anon$$obj.o(Region$$Table)
+    main                                     0x080024e9   Thumb Code   544  main.o(i.main)
+    AHBPrescTable                            0x08002790   Data          16  system_stm32f1xx.o(.constdata)
+    APBPrescTable                            0x080027a0   Data           8  system_stm32f1xx.o(.constdata)
+    asc2_0806                                0x080027a8   Data         552  oled.o(.constdata)
+    asc2_1206                                0x080029d0   Data        1140  oled.o(.constdata)
+    asc2_1608                                0x08002e44   Data        1520  oled.o(.constdata)
+    asc2_2412                                0x08003434   Data        3420  oled.o(.constdata)
+    Region$$Table$$Base                      0x08004190   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x080041b0   Number         0  anon$$obj.o(Region$$Table)
     hc_sr505_count                           0x20000000   Data           1  main.o(.data)
     people_detected                          0x20000001   Data           1  main.o(.data)
     vibration_detected                       0x20000002   Data           1  main.o(.data)
@@ -1357,31 +1357,32 @@ Image Symbol Table
     temp_threshold                           0x20000007   Data           1  main.o(.data)
     humidity_threshold                       0x20000008   Data           1  main.o(.data)
     setting_first_entry                      0x20000009   Data           1  main.o(.data)
-    vibration_sent                           0x2000000a   Data           1  main.o(.data)
-    mq2_sent                                 0x2000000b   Data           1  main.o(.data)
-    temp_alert_sent                          0x2000000c   Data           1  main.o(.data)
-    humidity_alert_sent                      0x2000000d   Data           1  main.o(.data)
-    mq2_threshold                            0x2000000e   Data           2  main.o(.data)
-    vibration_start_time                     0x20000010   Data           4  main.o(.data)
-    beep_start_time                          0x20000014   Data           4  main.o(.data)
-    dht11_read_time                          0x20000018   Data           4  main.o(.data)
-    mq2_read_time                            0x2000001c   Data           4  main.o(.data)
-    adc_value                                0x20000024   Data           4  main.o(.data)
-    vibration_alert_data                     0x20000028   Data          13  main.o(.data)
-    mq2_alert_data                           0x20000035   Data          21  main.o(.data)
-    temp_alert_data                          0x2000004a   Data          13  main.o(.data)
-    humidity_alert_data                      0x20000057   Data          13  main.o(.data)
-    uwTickFreq                               0x20000064   Data           1  stm32f1xx_hal.o(.data)
-    uwTickPrio                               0x20000068   Data           4  stm32f1xx_hal.o(.data)
-    uwTick                                   0x2000006c   Data           4  stm32f1xx_hal.o(.data)
-    SystemCoreClock                          0x20000070   Data           4  system_stm32f1xx.o(.data)
-    show_data                                0x20000074   Data          20  main.o(.bss)
-    hadc1                                    0x20000088   Data          48  adc.o(.bss)
-    huart3                                   0x200000b8   Data          72  usart.o(.bss)
-    pFlash                                   0x20000100   Data          32  stm32f1xx_hal_flash.o(.bss)
-    OLED_GRAM                                0x20000120   Data        1152  oled.o(.bss)
-    __libspace_start                         0x200005a0   Data          96  libspace.o(.bss)
-    __temporary_stack_top$libspace           0x20000600   Data           0  libspace.o(.bss)
+    vibration_reset_count                    0x2000000a   Data           1  main.o(.data)
+    vibration_sent                           0x2000000b   Data           1  main.o(.data)
+    mq2_sent                                 0x2000000c   Data           1  main.o(.data)
+    temp_alert_sent                          0x2000000d   Data           1  main.o(.data)
+    humidity_alert_sent                      0x2000000e   Data           1  main.o(.data)
+    mq2_threshold                            0x20000010   Data           2  main.o(.data)
+    vibration_start_time                     0x20000014   Data           4  main.o(.data)
+    beep_start_time                          0x20000018   Data           4  main.o(.data)
+    dht11_read_time                          0x2000001c   Data           4  main.o(.data)
+    mq2_read_time                            0x20000020   Data           4  main.o(.data)
+    adc_value                                0x20000028   Data           4  main.o(.data)
+    vibration_alert_data                     0x2000002c   Data          13  main.o(.data)
+    mq2_alert_data                           0x20000039   Data          21  main.o(.data)
+    temp_alert_data                          0x2000004e   Data          13  main.o(.data)
+    humidity_alert_data                      0x2000005b   Data          13  main.o(.data)
+    uwTickFreq                               0x20000068   Data           1  stm32f1xx_hal.o(.data)
+    uwTickPrio                               0x2000006c   Data           4  stm32f1xx_hal.o(.data)
+    uwTick                                   0x20000070   Data           4  stm32f1xx_hal.o(.data)
+    SystemCoreClock                          0x20000074   Data           4  system_stm32f1xx.o(.data)
+    show_data                                0x20000078   Data          20  main.o(.bss)
+    hadc1                                    0x2000008c   Data          48  adc.o(.bss)
+    huart3                                   0x200000bc   Data          72  usart.o(.bss)
+    pFlash                                   0x20000108   Data          32  stm32f1xx_hal_flash.o(.bss)
+    OLED_GRAM                                0x20000128   Data        1152  oled.o(.bss)
+    __libspace_start                         0x200005a8   Data          96  libspace.o(.bss)
+    __temporary_stack_top$libspace           0x20000608   Data           0  libspace.o(.bss)
 
 
 
@@ -1391,9 +1392,9 @@ Memory Map of the image
 
   Image Entry point : 0x080000ed
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x0000420c, Max: 0x00010000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00004228, Max: 0x00010000, ABSOLUTE)
 
-    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00004198, Max: 0x00010000, ABSOLUTE)
+    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x000041b0, Max: 0x00010000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -1566,30 +1567,31 @@ Memory Map of the image
     0x080024c4   0x080024c4   0x00000002   Code   RO          310    i.UsageFault_Handler  stm32f1xx_it.o
     0x080024c6   0x080024c6   0x00000020   Code   RO         1208    i.__NVIC_SetPriority  stm32f1xx_hal_cortex.o
     0x080024e6   0x080024e6   0x00000002   PAD
-    0x080024e8   0x080024e8   0x0000026c   Code   RO           20    i.main              main.o
-    0x08002754   0x08002754   0x00000012   Data   RO          906    .constdata          stm32f1xx_hal_rcc.o
-    0x08002766   0x08002766   0x00000012   Data   RO          998    .constdata          stm32f1xx_hal_rcc_ex.o
-    0x08002778   0x08002778   0x00000010   Data   RO         2060    .constdata          system_stm32f1xx.o
-    0x08002788   0x08002788   0x00000008   Data   RO         2061    .constdata          system_stm32f1xx.o
-    0x08002790   0x08002790   0x000019e8   Data   RO         2118    .constdata          oled.o
-    0x08004178   0x08004178   0x00000020   Data   RO         2510    Region$$Table       anon$$obj.o
+    0x080024e8   0x080024e8   0x00000284   Code   RO           20    i.main              main.o
+    0x0800276c   0x0800276c   0x00000012   Data   RO          906    .constdata          stm32f1xx_hal_rcc.o
+    0x0800277e   0x0800277e   0x00000012   Data   RO          998    .constdata          stm32f1xx_hal_rcc_ex.o
+    0x08002790   0x08002790   0x00000010   Data   RO         2060    .constdata          system_stm32f1xx.o
+    0x080027a0   0x080027a0   0x00000008   Data   RO         2061    .constdata          system_stm32f1xx.o
+    0x080027a8   0x080027a8   0x000019e8   Data   RO         2118    .constdata          oled.o
+    0x08004190   0x08004190   0x00000020   Data   RO         2510    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08004198, Size: 0x00000c00, Max: 0x00005000, ABSOLUTE)
+    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x080041b0, Size: 0x00000c08, Max: 0x00005000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x08004198   0x00000064   Data   RW           22    .data               main.o
-    0x20000064   0x080041fc   0x0000000c   Data   RW          743    .data               stm32f1xx_hal.o
-    0x20000070   0x08004208   0x00000004   Data   RW         2062    .data               system_stm32f1xx.o
-    0x20000074        -       0x00000014   Zero   RW           21    .bss                main.o
-    0x20000088        -       0x00000030   Zero   RW          220    .bss                adc.o
-    0x200000b8        -       0x00000048   Zero   RW          262    .bss                usart.o
-    0x20000100        -       0x00000020   Zero   RW         1449    .bss                stm32f1xx_hal_flash.o
-    0x20000120        -       0x00000480   Zero   RW         2117    .bss                oled.o
-    0x200005a0        -       0x00000060   Zero   RW         2384    .bss                c_w.l(libspace.o)
-    0x20000600        -       0x00000200   Zero   RW            2    HEAP                startup_stm32f103xb.o
-    0x20000800        -       0x00000400   Zero   RW            1    STACK               startup_stm32f103xb.o
+    0x20000000   0x080041b0   0x00000068   Data   RW           22    .data               main.o
+    0x20000068   0x08004218   0x0000000c   Data   RW          743    .data               stm32f1xx_hal.o
+    0x20000074   0x08004224   0x00000004   Data   RW         2062    .data               system_stm32f1xx.o
+    0x20000078        -       0x00000014   Zero   RW           21    .bss                main.o
+    0x2000008c        -       0x00000030   Zero   RW          220    .bss                adc.o
+    0x200000bc        -       0x00000048   Zero   RW          262    .bss                usart.o
+    0x20000104   0x08004228   0x00000004   PAD
+    0x20000108        -       0x00000020   Zero   RW         1449    .bss                stm32f1xx_hal_flash.o
+    0x20000128        -       0x00000480   Zero   RW         2117    .bss                oled.o
+    0x200005a8        -       0x00000060   Zero   RW         2384    .bss                c_w.l(libspace.o)
+    0x20000608        -       0x00000200   Zero   RW            2    HEAP                startup_stm32f103xb.o
+    0x20000808        -       0x00000400   Zero   RW            1    STACK               startup_stm32f103xb.o
 
 
 ==============================================================================
@@ -1602,7 +1604,7 @@ Image component sizes
        168         22          0          0         48       1617   adc.o
        476         68          0          0          0       4857   dht11.o
        240         16          0          0          0        991   gpio.o
-      1448        272          0        100         20     423084   main.o
+      1472        270          0        104         20     423178   main.o
       1022         48       6632          0       1152       8140   oled.o
         64         26        236          0       1536        804   startup_stm32f103xb.o
        164         28          0         12          0       5845   stm32f1xx_hal.o
@@ -1620,9 +1622,9 @@ Image component sizes
        168         20          0          0         72       1646   usart.o
 
     ----------------------------------------------------------------------
-      8836        812       6960        116       2860     513818   Object Totals
+      8860        810       6960        120       2864     513912   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-        20          0          0          0          0          0   (incl. Padding)
+        20          0          0          0          4          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -1681,15 +1683,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      9832        856       6960        116       2956     510222   Grand Totals
-      9832        856       6960        116       2956     510222   ELF Image Totals
-      9832        856       6960        116          0          0   ROM Totals
+      9856        854       6960        120       2960     510316   Grand Totals
+      9856        854       6960        120       2960     510316   ELF Image Totals
+      9856        854       6960        120          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                16792 (  16.40kB)
-    Total RW  Size (RW Data + ZI Data)              3072 (   3.00kB)
-    Total ROM Size (Code + RO Data + RW Data)      16908 (  16.51kB)
+    Total RO  Size (Code + RO Data)                16816 (  16.42kB)
+    Total RW  Size (RW Data + ZI Data)              3080 (   3.01kB)
+    Total ROM Size (Code + RO Data + RW Data)      16936 (  16.54kB)
 
 ==============================================================================
 

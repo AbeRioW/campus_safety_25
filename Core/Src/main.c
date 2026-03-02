@@ -69,6 +69,9 @@ uint8_t humidity_threshold = 100;
 uint16_t mq2_threshold = 240;
 uint8_t setting_first_entry = 1; // Flag for first entry into setting mode
 
+// Vibration reset counter
+uint8_t vibration_reset_count = 0;
+
 // Vibration alert data for USART3
 uint8_t vibration_alert_data[] = {0xFD, 0x00, 0x0A, 0x01, 0x01, 0xB7, 0xC7, 0xB7, 0xA8, 0xB4, 0xB3, 0xC8, 0xEB};
 uint8_t vibration_sent = 0; // Flag to avoid duplicate sending
@@ -481,13 +484,30 @@ int main(void)
 				}
 			}
 		}
+		else
+		{
+			vibration_detected = 0;
+			// Reset flag when vibration ends (pin goes high)
+			if(vibration_sent)
+			{
+				vibration_reset_count++;
+				if(vibration_reset_count >= 10) // Only reset after 10 consecutive high readings (1 second)
+				{
+					vibration_sent = 0;
+					vibration_reset_count = 0;
+				}
+			}
+			else
+			{
+				vibration_reset_count = 0; // Reset counter if flag already cleared
+			}
+		}
 		
 		if(vibration_active)
 		{
 			if(HAL_GetTick() - vibration_start_time >= 3000)
 			{
 				vibration_active = 0;
-				vibration_sent = 0; // Reset flag after vibration period ends
 			}
 		}
 		
