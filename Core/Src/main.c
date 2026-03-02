@@ -57,6 +57,14 @@ uint32_t beep_start_time = 0;
 uint8_t beep_active = 0;
 uint32_t dht11_read_time = 0;
 uint32_t mq2_read_time = 0;
+
+// Setting mode variables
+uint8_t in_setting_mode = 0;
+uint8_t setting_step = 0; // 0:temp, 1:humidity, 2:mq2, 3:back
+uint8_t temp_threshold = 30;
+uint8_t humidity_threshold = 100;
+uint16_t mq2_threshold = 240;
+uint8_t setting_first_entry = 1; // Flag for first entry into setting mode
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -67,25 +75,169 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t in_setting_mode = 0;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+void UpdateSettingDisplay(void)
+{
+    // Only clear screen when entering setting mode for the first time
+    if(setting_first_entry)
+    {
+        OLED_Clear();
+        OLED_ShowString(30, 0, (uint8_t*)"Setting", 16, 1);
+        setting_first_entry = 0;
+    }
+    
+    // Update temp line
+    if(setting_step == 0)
+    {
+        sprintf(show_data, "> temp %dC  ", temp_threshold);
+        OLED_ShowString(0, 18, (uint8_t*)show_data, 8, 1);
+    }
+    else
+    {
+        sprintf(show_data, "  temp %dC  ", temp_threshold);
+        OLED_ShowString(0, 18, (uint8_t*)show_data, 8, 1);
+    }
+    
+    // Update humidity line
+    if(setting_step == 1)
+    {
+        sprintf(show_data, "> humidity %dRH ", humidity_threshold);
+        OLED_ShowString(0, 30, (uint8_t*)show_data, 8, 1);
+    }
+    else
+    {
+        sprintf(show_data, "  humidity %dRH ", humidity_threshold);
+        OLED_ShowString(0, 30, (uint8_t*)show_data, 8, 1);
+    }
+    
+    // Update MQ2 line
+    if(setting_step == 2)
+    {
+        sprintf(show_data, "> MQ2 %d   ", mq2_threshold);
+        OLED_ShowString(0, 40, (uint8_t*)show_data, 8, 1);
+    }
+    else
+    {
+        sprintf(show_data, "  MQ2 %d   ", mq2_threshold);
+        OLED_ShowString(0, 40, (uint8_t*)show_data, 8, 1);
+    }
+    
+    // Update Back line
+    if(setting_step == 3)
+    {
+        OLED_ShowString(0, 50, (uint8_t*)"> Back    ", 8, 1);
+    }
+    else
+    {
+        OLED_ShowString(0, 50, (uint8_t*)"  Back    ", 8, 1);
+    }
+    
+    OLED_Refresh();
+}
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-  if (GPIO_Pin == KEY1_Pin)
-  {
-    OLED_Clear();
-    OLED_ShowString(30, 0, (uint8_t*)"Setting", 16, 1);
-		OLED_ShowString(0, 18, (uint8_t*)"> temp 30C", 8, 1);
-		OLED_ShowString(0, 30, (uint8_t*)"  humidity 20RH", 8, 1);
-		OLED_ShowString(0, 40, (uint8_t*)"  MQ2 60", 8, 1);
-		OLED_ShowString(0, 50, (uint8_t*)"  Back", 8, 1);
-    OLED_Refresh();
-    in_setting_mode = 1;
-  }
+    static uint32_t last_interrupt_time = 0;
+    uint32_t current_time = HAL_GetTick();
+    
+    // Debounce: ignore interrupts within 200ms
+    if(current_time - last_interrupt_time < 200)
+    {
+        return;
+    }
+    last_interrupt_time = current_time;
+    
+    if(GPIO_Pin == KEY1_Pin)
+    {
+        if(!in_setting_mode)
+        {
+            in_setting_mode = 1;
+            setting_step = 0;
+            setting_first_entry = 1;  // Set flag to clear screen on first entry
+            UpdateSettingDisplay();
+        }
+        else
+        {
+            setting_step++;
+            if(setting_step > 3)
+            {
+                // Exit setting mode
+                in_setting_mode = 0;
+                setting_step = 0;
+                OLED_Clear();
+                // Reset flag for next entry
+                setting_first_entry = 1;
+            }
+            else
+            {
+                UpdateSettingDisplay();
+            }
+        }
+    }
+    else if(GPIO_Pin == KEY2_Pin && in_setting_mode)
+    {
+        if(setting_step == 0) // Temp setting
+        {
+            temp_threshold++;
+            if(temp_threshold > 50)
+            {
+                temp_threshold = 15;
+            }
+            UpdateSettingDisplay();
+        }
+        else if(setting_step == 1) // Humidity setting
+        {
+            humidity_threshold++;
+            if(humidity_threshold > 120)
+            {
+                humidity_threshold = 90;
+            }
+            UpdateSettingDisplay();
+        }
+        else if(setting_step == 2) // MQ2 setting
+        {
+            mq2_threshold++;
+            if(mq2_threshold > 300)
+            {
+                mq2_threshold = 200;
+            }
+            UpdateSettingDisplay();
+        }
+    }
+    else if(GPIO_Pin == KEY3_Pin && in_setting_mode)
+    {
+        if(setting_step == 0) // Temp setting
+        {
+            temp_threshold--;
+            if(temp_threshold < 15)
+            {
+                temp_threshold = 50;
+            }
+            UpdateSettingDisplay();
+        }
+        else if(setting_step == 1) // Humidity setting
+        {
+            humidity_threshold--;
+            if(humidity_threshold < 90)
+            {
+                humidity_threshold = 120;
+            }
+            UpdateSettingDisplay();
+        }
+        else if(setting_step == 2) // MQ2 setting
+        {
+            mq2_threshold--;
+            if(mq2_threshold < 200)
+            {
+                mq2_threshold = 300;
+            }
+            UpdateSettingDisplay();
+        }
+    }
 }
 
 #ifdef __cplusplus
@@ -228,6 +380,11 @@ int main(void)
 		
 		OLED_Refresh();
 		
+		HAL_Delay(100);
+	}
+	else
+	{
+		// In setting mode, just refresh display
 		HAL_Delay(100);
 	}
   }
