@@ -83,10 +83,12 @@ uint8_t mq2_sent = 0; // Flag to avoid duplicate sending
 // Temperature alert data for USART3
 uint8_t temp_alert_data[] = {0xFD, 0x00, 0x0A, 0x01, 0x01, 0xCE, 0xC2, 0xB6, 0xC8, 0xB9, 0xFD, 0xB8, 0xDF};
 uint8_t temp_alert_sent = 0; // Flag to avoid duplicate sending
+uint32_t temp_alert_time = 0; // Time when temperature alert was sent
 
 // Humidity alert data for USART3
 uint8_t humidity_alert_data[] = {0xFD, 0x00, 0x0A, 0x01, 0x01, 0xCA, 0xAA, 0xB6, 0xC8, 0xB9, 0xFD, 0xB4, 0xF3};
 uint8_t humidity_alert_sent = 0; // Flag to avoid duplicate sending
+uint32_t humidity_alert_time = 0; // Time when humidity alert was sent
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -389,32 +391,34 @@ int main(void)
 			dht11_read_time = HAL_GetTick();
 			
 			// Check if temperature exceeds threshold
-			if(dht_data.temp_int > temp_threshold)
-			{
-				if(!temp_alert_sent)
-				{
-					HAL_UART_Transmit(&huart3, temp_alert_data, sizeof(temp_alert_data), 100);
-					temp_alert_sent = 1;
-				}
-			}
-			else
-			{
-				temp_alert_sent = 0; // Reset flag when temperature drops below threshold
-			}
-			
-			// Check if humidity exceeds threshold
-			if(dht_data.humidity_int > humidity_threshold)
-			{
-				if(!humidity_alert_sent)
-				{
-					HAL_UART_Transmit(&huart3, humidity_alert_data, sizeof(humidity_alert_data), 100);
-					humidity_alert_sent = 1;
-				}
-			}
-			else
-			{
-				humidity_alert_sent = 0; // Reset flag when humidity drops below threshold
-			}
+if(dht_data.temp_int > temp_threshold)
+{
+	if(!temp_alert_sent || (HAL_GetTick() - temp_alert_time >= 5000))
+	{
+		HAL_UART_Transmit(&huart3, temp_alert_data, sizeof(temp_alert_data), 100);
+		temp_alert_sent = 1;
+		temp_alert_time = HAL_GetTick();
+	}
+}
+else
+{
+	temp_alert_sent = 0; // Reset flag when temperature drops below threshold
+}
+
+// Check if humidity exceeds threshold
+if(dht_data.humidity_int > humidity_threshold)
+{
+	if(!humidity_alert_sent || (HAL_GetTick() - humidity_alert_time >= 5000))
+	{
+		HAL_UART_Transmit(&huart3, humidity_alert_data, sizeof(humidity_alert_data), 100);
+		humidity_alert_sent = 1;
+		humidity_alert_time = HAL_GetTick();
+	}
+}
+else
+{
+	humidity_alert_sent = 0; // Reset flag when humidity drops below threshold
+}
 		}
 		
 		if(HAL_GetTick() - mq2_read_time >= 500)
